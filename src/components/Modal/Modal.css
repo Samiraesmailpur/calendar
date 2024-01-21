@@ -1,0 +1,25 @@
+.modal-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 6px 10px 20px 0px rgba(0, 0, 0, 0.56);
+  width: 500px;
+  background-color: #fff;
+  padding: 30px 30px;
+  border-radius: 15px;
+  height: 150px;
+}
+
+.input {
+  width: 100%;
+  height: 30px;
+  outline: none;
+  padding: 10px;
+}
+
+.select-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
