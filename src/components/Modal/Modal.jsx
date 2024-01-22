@@ -6,9 +6,9 @@ import { useState } from "react";
 
 const Modal = ({ open, setEvents, setOpen, time }) => {
   const [eventData, setEventData] = useState({
-    start: null,
-    duration: null,
-    title: "",
+    start: "0",
+    duration: "30",
+    title: "Event",
   });
 
   const handleAddEvent = () => {
@@ -25,33 +25,26 @@ const Modal = ({ open, setEvents, setOpen, time }) => {
     >
       <Box className="modal-box">
         <Box className="select-box">
-          {/* <form action=""> */}
           <p>from:</p>
           <select
-            name=""
-            id=""
+            value={eventData.start}
             onChange={(e) =>
               setEventData({ ...eventData, start: e.target.value })
             }
           >
-            {time.map((item) => (
-              <option key={item} value={eventData.start}>
-                {item}
-              </option>
+            {Object.keys(time).map((item) => (
+              <option key={item}>{item}</option>
             ))}
           </select>
           <p>to:</p>
           <select
-            name=""
-            id=""
+            value={eventData.duration}
             onChange={(e) =>
               setEventData({ ...eventData, duration: e.target.value })
             }
           >
-            {time.map((item) => (
-              <option key={item} value={eventData.duration}>
-                {item}
-              </option>
+            {Object.keys(time).map((item) => (
+              <option key={item}>{item}</option>
             ))}
           </select>
           <input
@@ -62,10 +55,11 @@ const Modal = ({ open, setEvents, setOpen, time }) => {
               setEventData({ ...eventData, title: e.target.value })
             }
           />
-          {/* </form> */}
         </Box>
-        <Button onClick={() => setOpen(false)}>Cancel</Button>
-        <Button onClick={handleAddEvent}>Add event</Button>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleAddEvent}>Add event</Button>
+        </Box>
       </Box>
     </ModalMui>
   );

@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import InputTextField from "@/components/InputTextField/InputTextField";
 import {
   Alert,
@@ -38,11 +37,6 @@ const Register = () => {
     }
 
     try {
-      // const response = await axios.post("/api/register", {
-      //   email,
-      //   password,
-      // });
-      // console.log(response.data);
       const response = await fetch("/api/register", {
         method: "POST",
         headers: {

@@ -1,6 +1,5 @@
-.time-labels {
-  display: flex;
-  flex-direction: column;
+.calendar {
+  position: relative;
 }
 
 .time-label {
@@ -8,8 +7,7 @@
   font-size: 16px;
   font-weight: 200;
   color: #8a8a8a;
-  height: 50px;
-  position: relative;
+  height: 60px;
 }
 
 .time-label:nth-child(even) {
@@ -24,14 +22,22 @@
   background-color: #ccc;
 }
 
+.event-box {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  width: 100%;
+}
+
+.event:first-child {
+  margin-left: 38px;
+}
+
 .event {
   position: absolute;
   width: calc(100% - 38px);
   height: 50px;
   background: #e2ecf5;
-  top: 0;
-  z-index: -1;
-  left: 38px;
   max-width: 200px;
   border-left: 2px solid #6e9ecf;
 }
