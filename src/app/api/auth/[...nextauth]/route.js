@@ -18,6 +18,8 @@ export const authOptions = {
         try {
           const user = await User.findOne({ email: credentials.email });
 
+          console.log(user);
+
           if (user) {
             const isPasswordCorrect = bcrypt.compare(
               credentials.password,
@@ -31,8 +33,20 @@ export const authOptions = {
       },
     }),
   ],
+  callbacks: {
+    session: ({ session, token }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: token.sub,
+      },
+    }),
+  },
+
+  database: process.env.DB_HOST,
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST, handler as DELETE };

@@ -1,5 +1,4 @@
 "use client";
-
 import Calendar from "@/components/Calendar/Calendar";
 
 const CalendarPage = () => {

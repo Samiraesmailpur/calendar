@@ -5,7 +5,7 @@ import "./Header.css";
 import { List, ListItem, Typography } from "@mui/material";
 
 const Header = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <header>
@@ -14,7 +14,7 @@ const Header = () => {
           Home
         </Typography>
       </Link>
-      {session && (
+      {status === "authenticated" && (
         <Link href="/calendar" className="calendar">
           <Typography sx={{ color: "#000", fontSize: "22px" }}>
             Calendar
@@ -22,7 +22,7 @@ const Header = () => {
         </Link>
       )}
       <List className="list">
-        {!session ? (
+        {status !== "authenticated" ? (
           <>
             <Link href="/login">
               <ListItem className="item">Sign in</ListItem>
@@ -33,6 +33,7 @@ const Header = () => {
           </>
         ) : (
           <>
+            <p>{session?.user?.email}</p>
             <Link href="/">
               <ListItem
                 className="item"

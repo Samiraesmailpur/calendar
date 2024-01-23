@@ -1,6 +1,5 @@
 import { Box, Button } from "@mui/material";
 import { Modal as ModalMui } from "@mui/material";
-
 import "./Modal.css";
 import { useState } from "react";
 
@@ -64,15 +63,6 @@ const Modal = ({ open, setEvents, setOpen, time }) => {
       }
     }
   };
-
-  // for (let i = 0; i < resultData.length - 1; i++) {
-  //   if (resultData[i].start <= resultData[i + 1]?.start && resultData[i + 1]?.start < resultData[i].start + resultData[i].duration) {
-  //     console.log('resultData[i].order: ', resultData[i].order);
-  //     console.log('resultData[i+1].order + 1: ', resultData[i+1].order + 1);
-  //     console.log('resultData[i].title: ', resultData[i].title);
-  //     if (resultData[i].order != resultData[i+1].order + 1) resultData[i+1].order++;
-  //   }
-  // }
 
   return (
     <ModalMui
