@@ -6,15 +6,73 @@ import { useState } from "react";
 
 const Modal = ({ open, setEvents, setOpen, time }) => {
   const [eventData, setEventData] = useState({
-    start: "0",
-    duration: "30",
+    start: "8:30",
+    end: "9:00",
     title: "Event",
+    order: 1,
   });
 
-  const handleAddEvent = () => {
-    setEvents((prevEvents) => [...prevEvents, eventData]);
+  const handleAddEvent = async () => {
+    const convertedEventData = {
+      title: eventData.title,
+      start: time[eventData.start],
+      duration: Number(time[eventData.end]) - Number(time[eventData.start]),
+      order: eventData.order,
+      column: 1,
+    };
     setOpen(false);
+    setEvents((prevEvents) => {
+      let resultData = [...prevEvents, convertedEventData];
+      resultData.sort((a, b) => {
+        if (a.start !== b.start) {
+          return a.start - b.start;
+        }
+        return b.duration - a.duration;
+      });
+      for (let i = 0; i < resultData.length; i++) {
+        for (let j = i + 1; j < resultData.length; j++) {
+          if (
+            resultData[i].start <
+              resultData[j].start + resultData[j].duration &&
+            resultData[j].start < resultData[i].start + resultData[i].duration
+          ) {
+            if (resultData[i].order >= resultData[j].order) {
+              resultData[j].order = resultData[i].order + 1;
+            }
+          }
+        }
+      }
+
+      return resultData;
+    });
+
+    try {
+      const response = await fetch("/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(convertedEventData),
+      });
+      if (response.status === 201) {
+        console.log("create");
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response.status === 500) {
+        return;
+      }
+    }
   };
+
+  // for (let i = 0; i < resultData.length - 1; i++) {
+  //   if (resultData[i].start <= resultData[i + 1]?.start && resultData[i + 1]?.start < resultData[i].start + resultData[i].duration) {
+  //     console.log('resultData[i].order: ', resultData[i].order);
+  //     console.log('resultData[i+1].order + 1: ', resultData[i+1].order + 1);
+  //     console.log('resultData[i].title: ', resultData[i].title);
+  //     if (resultData[i].order != resultData[i+1].order + 1) resultData[i+1].order++;
+  //   }
+  // }
 
   return (
     <ModalMui
@@ -38,9 +96,9 @@ const Modal = ({ open, setEvents, setOpen, time }) => {
           </select>
           <p>to:</p>
           <select
-            value={eventData.duration}
+            value={eventData.end}
             onChange={(e) =>
-              setEventData({ ...eventData, duration: e.target.value })
+              setEventData({ ...eventData, end: e.target.value })
             }
           >
             {Object.keys(time).map((item) => (

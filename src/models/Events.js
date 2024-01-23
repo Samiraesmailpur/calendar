@@ -1,6 +1,4 @@
-import { number } from "joi";
-
-const { Schema, model } = require("mongoose");
+import mongoose, { Schema } from "mongoose";
 
 const eventsSchema = new Schema(
   {
@@ -17,13 +15,20 @@ const eventsSchema = new Schema(
       required: true,
     },
     owner: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    order: {
+      type: Number,
+      required: false,
+    },
+    column: {
+      type: Number,
+      required: false,
     },
   },
 
   { versionKey: false, timestamps: true }
 );
 
-export default mongoose.models.Events || mongoose.model("Event", eventsSchema);
+export default mongoose.models.events || mongoose.model("events", eventsSchema);

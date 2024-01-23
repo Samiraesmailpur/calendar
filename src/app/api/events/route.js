@@ -3,14 +3,15 @@ import connectDB from "@/db/server";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { _id: owner } = req.user;
+  console.log(req, "req");
+  const { _id: owner } = await req.user;
   const eventData = req.body;
   await connectDB();
 
   try {
     const newEvent = new Events({
       ...eventData,
-      owner: owner,
+      owner,
     });
 
     await newEvent.save();

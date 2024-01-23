@@ -26,7 +26,7 @@ export const authOptions = {
             if (isPasswordCorrect) return user;
           }
         } catch (error) {
-          throw new Error(error);
+          return { error: error.message };
         }
       },
     }),
