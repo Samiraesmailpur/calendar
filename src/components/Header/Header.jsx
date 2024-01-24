@@ -33,7 +33,7 @@ const Header = () => {
           </>
         ) : (
           <>
-            <p>{session?.user?.email}</p>
+            <p className="item">{session?.user?.email}</p>
             <Link href="/">
               <ListItem
                 className="item"

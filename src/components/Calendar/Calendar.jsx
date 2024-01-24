@@ -2,44 +2,55 @@ import React, { useEffect, useState } from "react";
 import "./Calendar.css";
 import Modal from "../Modal/Modal";
 import { RxCross2 } from "react-icons/rx";
+import ExportFileButton from "../ExportFileButton/ExportFileButton";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteEventById, createEvent, getEvents } from "@/store/operations";
+import { selectEvents } from "@/store/selectors";
+import { setEvents } from "@/store/eventsSlise";
 
 const MyCalendar = () => {
-  const [events, setEvents] = useState([]);
+  const dispatch = useDispatch();
+  const events = useSelector(selectEvents);
   const [open, setOpen] = useState(false);
 
   const deleteEvent = async (_id) => {
-    try {
-      const response = await fetch(`/api/event/${_id}`, {
-        method: "DELETE",
-      });
-      if (response.status === 200) {
-        console.log("Event deleted successfully");
-        await fetchEvents();
-      }
-    } catch (error) {
-      console.error("Error deleting event", error);
-    }
+    await dispatch(deleteEventById(_id));
+    // await dispatch(getEvents());
+    fetchEventsAndUpdate(events);
   };
 
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch("/api/events");
-      if (response.ok) {
-        const events = await response.json();
-        return events;
+  const processAndSetEvents = (data) => {
+    const copiedData = JSON.parse(JSON.stringify(data));
+
+    copiedData.sort((a, b) => {
+      if (a.start !== b.start) {
+        return a.start - b.start;
       }
-    } catch (error) {
-      console.error("Error fetching events", error);
+      return b.duration - a.duration;
+    });
+
+    for (let i = 0; i < copiedData.length; i++) {
+      for (let j = i + 1; j < copiedData.length; j++) {
+        if (
+          copiedData[i].start < copiedData[j].start + copiedData[j].duration &&
+          copiedData[j].start < copiedData[i].start + copiedData[i].duration
+        ) {
+          if (copiedData[i].order >= copiedData[j].order) {
+            copiedData[j].order = copiedData[i].order + 1;
+          }
+        }
+      }
     }
+    dispatch(setEvents(copiedData || []));
+  };
+
+  const fetchEventsAndUpdate = async () => {
+    const updatedEvents = await dispatch(getEvents());
+    processAndSetEvents(updatedEvents.payload);
   };
 
   useEffect(() => {
-    const getEvents = async () => {
-      const fetchedEvents = await fetchEvents();
-      setEvents(fetchedEvents || []);
-    };
-
-    getEvents();
+    fetchEventsAndUpdate();
   }, []);
 
   const timeMap = {
@@ -64,11 +75,9 @@ const MyCalendar = () => {
     "17:00": 540,
   };
 
-  console.log(events, "events");
-
   return (
     <>
-      {/* {events.map((item, index) => `${index+1} -> start: ${item.start}, duration: ${item.duration}, order: ${item.order}.     `)} */}
+      <ExportFileButton events={events} />
       <div className="calendar">
         <div className="time-labels" onClick={() => setOpen(true)}>
           {Object.keys(timeMap).map((item, idx) => (
@@ -78,7 +87,7 @@ const MyCalendar = () => {
           ))}
         </div>
         <div className="event-box">
-          {events.map((event, index) => (
+          {events?.map((event, index) => (
             <div
               key={index}
               className="event"
@@ -96,7 +105,7 @@ const MyCalendar = () => {
         {open && (
           <Modal
             open={open}
-            setEvents={setEvents}
+            fetchEventsAndUpdate={fetchEventsAndUpdate}
             setOpen={setOpen}
             time={timeMap}
           />

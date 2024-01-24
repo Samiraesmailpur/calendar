@@ -56,7 +56,6 @@ const Login = () => {
     } else {
       router.replace("/calendar");
     }
-    console.log(response);
     return response;
   };
 

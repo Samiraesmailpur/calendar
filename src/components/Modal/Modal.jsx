@@ -2,66 +2,32 @@ import { Box, Button } from "@mui/material";
 import { Modal as ModalMui } from "@mui/material";
 import "./Modal.css";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { createEvent } from "@/store/operations";
 
-const Modal = ({ open, setEvents, setOpen, time }) => {
-  const [eventData, setEventData] = useState({
+const Modal = ({ open, fetchEventsAndUpdate, setOpen, time }) => {
+  const dispatch = useDispatch();
+  const [modalEventData, setModalEventData] = useState({
     start: "8:30",
     end: "9:00",
     title: "Event",
     order: 1,
+    column: 1,
   });
 
   const handleAddEvent = async () => {
     const convertedEventData = {
-      title: eventData.title,
-      start: time[eventData.start],
-      duration: Number(time[eventData.end]) - Number(time[eventData.start]),
-      order: eventData.order,
-      column: 1,
+      title: modalEventData.title,
+      start: time[modalEventData.start],
+      duration:
+        Number(time[modalEventData.end]) - Number(time[modalEventData.start]),
+      order: modalEventData.order,
+      column: modalEventData.column,
     };
+
+    await dispatch(createEvent(convertedEventData));
+    fetchEventsAndUpdate();
     setOpen(false);
-    setEvents((prevEvents) => {
-      let resultData = [...prevEvents, convertedEventData];
-      resultData.sort((a, b) => {
-        if (a.start !== b.start) {
-          return a.start - b.start;
-        }
-        return b.duration - a.duration;
-      });
-      for (let i = 0; i < resultData.length; i++) {
-        for (let j = i + 1; j < resultData.length; j++) {
-          if (
-            resultData[i].start <
-              resultData[j].start + resultData[j].duration &&
-            resultData[j].start < resultData[i].start + resultData[i].duration
-          ) {
-            if (resultData[i].order >= resultData[j].order) {
-              resultData[j].order = resultData[i].order + 1;
-            }
-          }
-        }
-      }
-
-      return resultData;
-    });
-
-    try {
-      const response = await fetch("/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(convertedEventData),
-      });
-      if (response.status === 201) {
-        console.log("create");
-      }
-    } catch (error) {
-      console.log(error);
-      if (error.response.status === 500) {
-        return;
-      }
-    }
   };
 
   return (
@@ -75,9 +41,9 @@ const Modal = ({ open, setEvents, setOpen, time }) => {
         <Box className="select-box">
           <p>from:</p>
           <select
-            value={eventData.start}
+            value={modalEventData.start}
             onChange={(e) =>
-              setEventData({ ...eventData, start: e.target.value })
+              setModalEventData({ ...modalEventData, start: e.target.value })
             }
           >
             {Object.keys(time).map((item) => (
@@ -86,9 +52,9 @@ const Modal = ({ open, setEvents, setOpen, time }) => {
           </select>
           <p>to:</p>
           <select
-            value={eventData.end}
+            value={modalEventData.end}
             onChange={(e) =>
-              setEventData({ ...eventData, end: e.target.value })
+              setModalEventData({ ...modalEventData, end: e.target.value })
             }
           >
             {Object.keys(time).map((item) => (
@@ -98,9 +64,9 @@ const Modal = ({ open, setEvents, setOpen, time }) => {
           <input
             className="input"
             type="text"
-            value={eventData.title}
+            value={modalEventData.title}
             onChange={(e) =>
-              setEventData({ ...eventData, title: e.target.value })
+              setModalEventData({ ...modalEventData, title: e.target.value })
             }
           />
         </Box>

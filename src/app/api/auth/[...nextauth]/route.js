@@ -18,8 +18,6 @@ export const authOptions = {
         try {
           const user = await User.findOne({ email: credentials.email });
 
-          console.log(user);
-
           if (user) {
             const isPasswordCorrect = bcrypt.compare(
               credentials.password,

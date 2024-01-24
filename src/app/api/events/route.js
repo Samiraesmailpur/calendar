@@ -22,44 +22,18 @@ export async function POST(req) {
     });
 
     await newEvent.save();
-    return new NextResponse(`Event created successfully`, { status: 201 });
-  } catch (error) {
-    return new NextResponse(error.message, {
-      status: 500,
+    return new NextResponse({
+      status: 201,
+      message: "Event created successfully",
     });
+  } catch (error) {
+    return new NextResponse({ message: error.message, status: 500 });
   }
 }
-
-// export async function DELETE(request) {
-//   const session = await getServerSession(authOptions);
-//   const { id: owner } = session?.user;
-//   const { id } = request.query;
-
-//   await connectDB();
-
-//   try {
-//     const deletedEvent = await Events.findByIdAndRemove({
-//       _id: id,
-//       owner,
-//     });
-
-//     if (deletedEvent) {
-//       return new NextResponse(`Event deleted successfully`, { status: 200 });
-//     } else {
-//       return new NextResponse(`Event not found`, { status: 404 });
-//     }
-//   } catch (error) {
-//     return new NextResponse(error.message, {
-//       status: 500,
-//     });
-//   }
-// }
 
 export async function GET() {
   const session = await getServerSession(authOptions);
   const { id: owner } = session?.user;
-
-  console.log(owner);
 
   await connectDB();
 

@@ -9,6 +9,7 @@ header {
   display: flex;
   justify-content: flex-end;
   gap: 20px;
+  align-items: baseline;
 }
 
 .item {

@@ -3,6 +3,7 @@ import Header from "@/components/Header/Header";
 import SessionProvider from "@/utils/SessionProvider";
 import { getServerSession } from "next-auth";
 import { Container } from "@mui/material";
+import StoreProvider from "./StoreProvider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -17,12 +18,14 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Container>
-          <SessionProvider session={session}>
-            <Header />
-            {children}
-          </SessionProvider>
-        </Container>
+        <StoreProvider>
+          <Container>
+            <SessionProvider session={session}>
+              <Header />
+              {children}
+            </SessionProvider>
+          </Container>
+        </StoreProvider>
       </body>
     </html>
   );
